@@ -2,9 +2,10 @@ from fastapi import FastAPI, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import List
-from .database import SessionLocal, engine
+from .db import SessionLocal, engine
 from .models import SensorData
 import logging
+import os
 import uvicorn
 
 # Create the database tables
@@ -34,7 +35,9 @@ def get_db():
         db.close()
 
 # API Key authentication
-API_KEY = "mysecureapikey123"
+API_KEY = os.getenv("CENTRAL_PI_API_KEY")
+if not API_KEY:
+    raise RuntimeError("CENTRAL_PI_API_KEY must be set")
 
 def verify_api_key(api_key: str = Header(...)):
     if api_key != API_KEY:
@@ -63,4 +66,4 @@ def read_sensor_data_by_type(sensor_type: str, db: Session = Depends(get_db)):
 
 if __name__ == "__main__":
     logging.info("Starting Central Command Pi FastAPI Server...")
-    uvicorn.run("central_pi_server:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("central_pi.server:app", host="0.0.0.0", port=8000, reload=True)
