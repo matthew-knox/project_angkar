@@ -1,0 +1,33 @@
+# Sensor Pi
+
+Publishes simulated telemetry to the queue.
+
+## Required environment variables
+
+- SENSOR_PI_RABBITMQ_URL
+
+Optional:
+
+- SENSOR_PI_QUEUE_NAME (default: sensor_data_queue)
+- SENSOR_PI_ID (default: sensor-pi-01)
+- SENSOR_PI_INTERVAL_SECONDS (default: 5)
+
+## Run locally
+
+SENSOR_PI_RABBITMQ_URL=amqp://sensor:sensorpass@<queue-pi-ip>:5672/sensors_vhost \
+python -m sensor_pi.publisher
+
+## systemd (on Pi)
+
+1) Copy project to /opt/sensor_pi and create /etc/sensor_pi.env
+2) Install service:
+
+sudo cp systemd/sensor-pi-publisher.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now sensor-pi-publisher
+
+## Install script
+
+Run from the repo root:
+
+sudo bash sensor_pi/scripts/install.sh

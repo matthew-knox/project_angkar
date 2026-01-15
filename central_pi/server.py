@@ -39,7 +39,7 @@ API_KEY = os.getenv("CENTRAL_PI_API_KEY")
 if not API_KEY:
     raise RuntimeError("CENTRAL_PI_API_KEY must be set")
 
-def verify_api_key(api_key: str = Header(...)):
+def verify_api_key(api_key: str = Header(..., alias="X-API-Key")):
     if api_key != API_KEY:
         raise HTTPException(status_code=403, detail="Invalid API key")
 

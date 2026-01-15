@@ -1,0 +1,43 @@
+# Central Pi
+
+Runs the FastAPI API and the RabbitMQ consumer that persists telemetry.
+
+## Required environment variables
+
+- CENTRAL_PI_API_KEY
+- CENTRAL_PI_RABBITMQ_URL
+
+Optional:
+
+- CENTRAL_PI_QUEUE_NAME (default: sensor_data_queue)
+
+## Run locally
+
+1) Install deps:
+
+pip install -r requirements.txt
+
+2) Start API:
+
+CENTRAL_PI_API_KEY=changeme uvicorn central_pi.server:app --host 0.0.0.0 --port 8000
+
+3) Start consumer (separate shell):
+
+CENTRAL_PI_RABBITMQ_URL=amqp://sensor:sensorpass@<queue-pi-ip>:5672/sensors_vhost \
+python -m central_pi.consumer
+
+## systemd (on Pi)
+
+1) Copy project to /opt/central_pi and create /etc/central_pi.env
+2) Install services:
+
+sudo cp systemd/central-pi-api.service /etc/systemd/system/
+sudo cp systemd/central-pi-consumer.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now central-pi-api central-pi-consumer
+
+## Install script
+
+Run from the repo root:
+
+sudo bash central_pi/scripts/install.sh

@@ -1,0 +1,17 @@
+[Unit]
+Description=Central Pi FastAPI service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/opt/central_pi
+Environment=PYTHONPATH=/opt
+EnvironmentFile=/etc/central_pi.env
+ExecStart=/usr/bin/python -m uvicorn central_pi.server:app --host 0.0.0.0 --port 8000
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

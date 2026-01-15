@@ -1,0 +1,53 @@
+# Queue Pi (RabbitMQ)
+
+This service hosts the RabbitMQ broker used by all sensor Pis and the central Pi.
+
+## Quick start
+
+1) Start RabbitMQ:
+
+docker compose up -d
+
+2) Open the management UI:
+
+http://<queue-pi-ip>:15672
+
+## Defaults
+
+- Admin user: admin / adminpass
+- Sensor user: sensor / sensorpass
+- Vhost: sensors_vhost
+- AMQP port: 5672
+- Management UI: 15672
+- Prometheus: 9090
+- Grafana: 3000
+- Queue monitor API: 9000
+- Node exporter: 9100
+- RabbitMQ metrics: 15692
+  (used by Prometheus and Grafana)
+
+## Connection string examples
+
+- Central Pi consumer:
+  amqp://sensor:sensorpass@<queue-pi-ip>:5672/sensors_vhost
+
+## Notes
+
+- Change default credentials before deploying to production.
+- The RabbitMQ definitions are loaded from:
+  ./rabbitmq/definitions.json
+- If you change RabbitMQ credentials, update `queue_pi/docker-compose.yml`
+  for the queue-monitor and Grafana admin user/password.
+- Prometheus scrapes RabbitMQ metrics from:
+  http://<queue-pi-ip>:15692/metrics
+- Queue monitor exposes:
+  http://<queue-pi-ip>:9000/health
+  http://<queue-pi-ip>:9000/metrics
+- Grafana auto-provisions a Prometheus data source and a
+  "Queue Pi Overview" dashboard.
+
+## Install script
+
+Run from the repo root:
+
+sudo bash queue_pi/scripts/install.sh

@@ -1,13 +1,17 @@
 import asyncio
 import aio_pika
 import json
+import logging
+import os
 import random
 from datetime import datetime
 
 # RabbitMQ settings
-# TODO: replace <queue-pi-ip> with actual ip
-RABBITMQ_URL = "amqp://guest:guest@<queue-pi-ip>:5672/"
-QUEUE_NAME = "sensor_data_queue"
+RABBITMQ_URL = os.getenv("SENSOR_PI_RABBITMQ_URL")
+if not RABBITMQ_URL:
+    raise RuntimeError("SENSOR_PI_RABBITMQ_URL must be set")
+QUEUE_NAME = os.getenv("SENSOR_PI_QUEUE_NAME", "sensor_data_queue")
+PUBLISH_INTERVAL_SECONDS = float(os.getenv("SENSOR_PI_INTERVAL_SECONDS", "5"))
 
 
 async def publish_sensor_data(pi_id: str):
@@ -47,18 +51,19 @@ async def publish_sensor_data(pi_id: str):
                 aio_pika.Message(body=json.dumps(sensor_data_temp).encode()),
                 routing_key=queue.name,
             )
-            print(f"Published: {sensor_data_temp}")
+            logging.info("Published: %s", sensor_data_temp)
 
             # Publish humidity data
             await channel.default_exchange.publish(
                 aio_pika.Message(body=json.dumps(sensor_data_humidity).encode()),
                 routing_key=queue.name,
             )
-            print(f"Published: {sensor_data_humidity}")
+            logging.info("Published: %s", sensor_data_humidity)
 
-            await asyncio.sleep(5)  # Send data every 5 seconds
+            await asyncio.sleep(PUBLISH_INTERVAL_SECONDS)
 
 
 if __name__ == "__main__":
-    pi_id = "sensor-pi-01"  # Unique identifier for the Sensor Pi
+    logging.basicConfig(level=logging.INFO)
+    pi_id = os.getenv("SENSOR_PI_ID", "sensor-pi-01")
     asyncio.run(publish_sensor_data(pi_id))

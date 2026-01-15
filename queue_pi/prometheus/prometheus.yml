@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: rabbitmq
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["rabbitmq:15692"]
+
+  - job_name: queue-monitor
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["queue-monitor:9000"]
+
+  - job_name: node
+    static_configs:
+      - targets: ["node-exporter:9100"]

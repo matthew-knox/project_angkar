@@ -1,0 +1,17 @@
+[Unit]
+Description=Central Pi RabbitMQ consumer
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/opt/central_pi
+Environment=PYTHONPATH=/opt
+EnvironmentFile=/etc/central_pi.env
+ExecStart=/usr/bin/python -m central_pi.consumer
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

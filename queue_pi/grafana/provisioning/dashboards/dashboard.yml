@@ -1,0 +1,10 @@
+apiVersion: 1
+
+providers:
+  - name: QueuePi
+    folder: Queue Pi
+    type: file
+    disableDeletion: true
+    editable: true
+    options:
+      path: /etc/grafana/dashboards

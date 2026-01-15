@@ -1,0 +1,37 @@
+{
+  "users": [
+    {
+      "name": "admin",
+      "password": "adminpass",
+      "tags": "administrator"
+    },
+    {
+      "name": "sensor",
+      "password": "sensorpass",
+      "tags": ""
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "sensors_vhost"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "admin",
+      "vhost": "sensors_vhost",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "sensor",
+      "vhost": "sensors_vhost",
+      "configure": "",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "parameters": [],
+  "policies": []
+}
